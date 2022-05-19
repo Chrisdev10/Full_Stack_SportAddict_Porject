@@ -1,0 +1,41 @@
+version: '3'
+services:
+  spring-app:
+    container_name: spring-app
+    build:
+      context: ./TP3-Spring_AngularAPP
+      dockerfile: Dockerfile
+    image: spring-rest-app:v1
+    ports:
+      - "8080:8080"
+    networks:
+      - tp3-network
+    depends_on:
+      - mysqldb
+  angular-app:
+    container_name: angular-app
+    build:
+      context: ./TP3-FRONT
+      dockerfile: Dockerfile
+    image: angular-front-app:v1
+    ports:
+      - "1080:80"
+    networks:
+      - tp3-network
+  mysqldb:
+    container_name: mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sportaddict
+    volumes:
+      - ./TP3-Spring_AngularAPP/src/main/resources:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - tp3-network
+networks:
+  tp3-network:
+    driver: bridge
+  
